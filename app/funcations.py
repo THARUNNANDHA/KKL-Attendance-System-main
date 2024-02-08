@@ -22,6 +22,7 @@ from sqlalchemy.orm import aliased
 from .task import *
 scheduler = sched.scheduler(time.time, time.sleep)
 import sqlite3
+from flask import current_app
 
 def send_mail(email, subject, body):
     sender_email = "kklimited1013@gmail.com"
@@ -734,18 +735,36 @@ def check_send_sms(emp_id):
 
 
 
+# def createXL():
+#     try:
+#         APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+#         saveFolder = app.config['DAY_ATTENDANCE_FOLDER']
+        
+#         sqlite_file = 'app/database.db'    # name of the SQLite database file
+#         conn = sqlite3.connect(sqlite_file)
+#         print("connection ", conn)
+
+#         # Read SQLite query results into a pandas DataFrame
+#         event1 = pd.read_sql_query("SELECT * FROM Attendance", conn)
+#         event1.to_excel("{}dayattend.xlsx".format(saveFolder))
+        
+#         return True  # Return True if the file creation is successful
+#     except Exception as e:
+#         print("An error occurred while creating the Excel file:", e)
+#         return False  # Return False if an error occurs during file creation
+
+
+
 def createXL():
     try:
-        APP_ROOT = os.path.dirname(os.path.abspath(__file__))
-        saveFolder = app.config['DAY_ATTENDANCE_FOLDER']
+        saveFolder = current_app.config['DAY_ATTENDANCE_FOLDER']
         
         sqlite_file = 'app/database.db'    # name of the SQLite database file
         conn = sqlite3.connect(sqlite_file)
-        print("connection ", conn)
 
         # Read SQLite query results into a pandas DataFrame
         event1 = pd.read_sql_query("SELECT * FROM Attendance", conn)
-        event1.to_excel("{}dayattend.xlsx".format(saveFolder))
+        event1.to_excel(os.path.join(saveFolder, "dayattend.xlsx"))
         
         return True  # Return True if the file creation is successful
     except Exception as e:

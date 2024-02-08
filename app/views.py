@@ -13,7 +13,7 @@ from .funcations import *
 from werkzeug.utils import secure_filename
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import func
-
+from flask import send_from_directory,current_app
 
 
 import csv
@@ -1417,19 +1417,34 @@ def send_continue_message():
 
 #tharun
 
-@views.route('/createXL',methods=['GET','POST'])
+# @views.route('/createXL',methods=['GET','POST'])
+# @login_required
+# def createFile():
+#     if createXL():
+#         return redirect(url_for('views.downloadXL'))
+    
+#     else: return "Error creating Excel file"
+    
+
+# @views.route('/downloadXL',methods=['GET','POST'])
+# @login_required
+# def downloadXL():
+#     APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+#     saveFolder = os.path.join(APP_ROOT, 'static/XLfile')
+    
+#     return render_template('admin.html')
+
+@views.route('/createXL', methods=['GET', 'POST'])
 @login_required
 def createFile():
     if createXL():
         return redirect(url_for('views.downloadXL'))
-    
-    else: return "Error creating Excel file"
-    
+    else:
+        # Handle error here, maybe render an error page
+        return "Error creating Excel file"
 
-@views.route('/downloadXL',methods=['GET','POST'])
+@views.route('/downloadXL', methods=['GET', 'POST'])
 @login_required
 def downloadXL():
-    APP_ROOT = os.path.dirname(os.path.abspath(__file__))
-    saveFolder = os.path.join(APP_ROOT, 'static/XLfile')
-    
-    return render_template('admin.html')
+    saveFolder = current_app.config['DAY_ATTENDANCE_FOLDER']
+    return send_from_directory(saveFolder, "dayattend.xlsx", as_attachment=True)
